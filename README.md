@@ -22,7 +22,7 @@ If you're having trouble installing due to my error or you're just new to linux,
 
 # Usage
 1. Open the menu
-2. Create a new scratch based on a template you have created
+2. Create a new scratch based on a template you have created or one of the ones that comes with the repo
 3. Edit the property `name` in `.scratch.json` to easily find the project later
 
 # Configuration
