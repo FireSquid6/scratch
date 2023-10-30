@@ -5,7 +5,7 @@ import os
 # ----------------------------------
 
 # The executable to run to open your editor. I.e. "vim", "code", "nvim", etc.
-EDITOR = "code"
+EDITOR = "kitty"
 
 # your rofi version. Find out with `rofi -v`
 ROFI_VERSION = "1.7.1"
