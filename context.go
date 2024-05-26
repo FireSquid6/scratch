@@ -50,25 +50,29 @@ func formatPath(p string) (string) {
 type RealFilesystem struct{}
 
 func (fs *RealFilesystem) Open(path string) (File, error) {
-	f, err := os.ReadFile(path)
+  p := formatPath(path)
+	f, err := os.ReadFile(p)
 	if err != nil {
 		return File{}, err
 	}
 
-	return File{text: string(f), path: path}, nil
+	return File{text: string(f), path: p}, nil
 }
 
 func (fs *RealFilesystem) Write(path string, text string) error {
-	return os.WriteFile(path, []byte(text), 0644)
+  p := formatPath(path)
+	return os.WriteFile(p, []byte(text), 0644)
 }
 
 func (fs *RealFilesystem) Exists(path string) bool {
-	_, err := os.Stat(path)
+  p := formatPath(path)
+	_, err := os.Stat(p)
 	return err == nil
 }
 
 func (fs *RealFilesystem) Delete(path string) error {
-	return os.Remove(path)
+  p := formatPath(path)
+	return os.Remove(p)
 }
 
 type FakeFilesystem struct {
