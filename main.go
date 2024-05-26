@@ -29,5 +29,7 @@ func main() {
     args.Create.Run(&ctx)
   case args.Pad != nil:
     args.Pad.Run(&ctx)
+  default:
+    fmt.Println("No comamnd specified. Try --help for more information.")
   }
 }
