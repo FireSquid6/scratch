@@ -46,7 +46,7 @@ type Unarchive struct {
 }
 
 type Command interface {
-	Run(ctx CommandContext) error
+	Run(ctx *CommandContext) error
 }
 
 func main() {
