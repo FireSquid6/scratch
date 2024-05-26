@@ -17,38 +17,17 @@ var args struct {
 	Unarchive *Unarchive   `arg:"subcommand:unarchive" help:"Unarchive a project"`
 }
 
-type CreateCmd struct {
-	Name     string `arg:"positional" help:"Name of the project"`
-	Template string `arg:"positional" help:"Template name to use"`
-}
 
-type PadCmd struct {
-	Template string `arg:"positional" help:"Template name"`
-}
-
-type TemplateCmd struct {
-	Name string `arg:"positional" help:"Name of the template"`
-}
-
-type ProjectsCmd struct{}
-type PadsCmd struct{}
-
-type Elevate struct {
-	Name string `arg:"-n,--name" default:"__none__" help:"Name of the project"`
-}
-
-type Archive struct {
-	Name string `arg:"positional" help:"Name of the project or scratch to archive"`
-}
-
-type Unarchive struct {
-	Name string `arg:"positional" help:"Name of the project or scratch to unarchive"`
-}
-
-type Command interface {
-	Run(ctx *CommandContext) error
-}
 
 func main() {
 	fmt.Println("Hello, world!")
+
+  ctx := GetContext()
+
+  switch {
+  case args.Create != nil:
+    args.Create.Run(&ctx)
+  case args.Pad != nil:
+    args.Pad.Run(&ctx)
+  }
 }
