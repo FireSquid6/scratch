@@ -20,7 +20,6 @@ var args struct {
 
 
 func main() {
-	fmt.Println("Hello, world!")
 
   ctx := GetContext()
 
