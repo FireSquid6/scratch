@@ -38,11 +38,11 @@ type Elevate struct {
 }
 
 type Archive struct {
-	Name string `arg:"positional" help:"Name of the project or scratch to archive`
+	Name string `arg:"positional" help:"Name of the project or scratch to archive"`
 }
 
 type Unarchive struct {
-	Name string `arg:"positional" help:"Name of the project or scratch to unarchive`
+	Name string `arg:"positional" help:"Name of the project or scratch to unarchive"`
 }
 
 type Command interface {

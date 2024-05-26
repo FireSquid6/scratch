@@ -47,9 +47,17 @@ func formatPath(p string) (string) {
   return p
 }
 
+func fakeFormatPath(p string) (string) {
+  if strings.HasPrefix(p, "~/") {
+    return path.Join("/home/user", p[2:])
+  }
+
+  return p
+}
+
 type RealFilesystem struct{}
 
-func (fs *RealFilesystem) Open(path string) (File, error) {
+func (fs *RealFilesystem) Read(path string) (File, error) {
   p := formatPath(path)
 	f, err := os.ReadFile(p)
 	if err != nil {
@@ -91,4 +99,12 @@ func (fs *FakeFilesystem) Write(path string, text string) error {
 func (fs *FakeFilesystem) Exists(path string) bool {
 	_, ok := fs.files[path]
 	return ok
+}
+
+
+func GetContext() CommandContext {
+  fs := &RealFilesystem{}
+  conf := getDeafultConfig()
+
+  return CommandContext{fs: fs, conf: conf}
 }
