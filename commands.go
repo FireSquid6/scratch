@@ -1,12 +1,29 @@
 package main
 
+import (
+  "fmt"
+  "path"
+)
+
 type CreateCmd struct {
 	Name     string `arg:"positional" help:"Name of the project"`
 	Template string `arg:"positional" help:"Template name to use"`
 }
 
-func (c *CreateCmd) Run(ctx *CommandContext) error {
-  return nil
+func (c *CreateCmd) Run(ctx *CommandContext) {
+  if ctx.fs.Exists(path.Join(ctx.conf.ProjectsDirectory, c.Name)) {
+    fmt.Println("Project with that name already exists. Aborting.")
+    return
+  }
+
+  templatePath := path.Join(ctx.conf.TemplatesDirectory, c.Template)
+  if !ctx.fs.Exists(templatePath) {
+    fmt.Println("Template not found. Aborting.")
+    return
+  }
+
+  ctx.fs.Copy(templatePath, path.Join(ctx.conf.ProjectsDirectory, c.Name))
+  fmt.Println("Created project", c.Name, "in", path.Join(ctx.conf.ProjectsDirectory, c.Name))
 }
 
 type PadCmd struct {
@@ -37,5 +54,5 @@ type Unarchive struct {
 }
 
 type Command interface {
-	Run(ctx *CommandContext) error
+	Run(ctx *CommandContext)
 }

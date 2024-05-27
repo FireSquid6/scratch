@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
   "strings"
+  "github.com/otiai10/copy"
 )
 
 type CommandContext struct {
@@ -16,6 +17,8 @@ type Filesystem interface {
 	Write(path string, text string) error
 	Exists(path string) bool
 	Delete(path string) error
+  GetFilepathsInDirectory(path string) ([]string, error)
+  Copy(src string, dest string) error
 }
 
 type File struct {
@@ -83,22 +86,22 @@ func (fs *RealFilesystem) Delete(path string) error {
 	return os.Remove(p)
 }
 
-type FakeFilesystem struct {
-	files map[string]string
+func (fs *RealFilesystem) Copy(src string, dest string) error {
+  src = formatPath(src)
+  dest = formatPath(dest)
+  return copy.Copy(src, dest)
 }
 
-func (fs *FakeFilesystem) Read(path string) (File, error) {
-	return File{text: fs.files[path], path: path}, nil
-}
+func (fs *RealFilesystem) GetFilepathsInDirectory(path string) ([]string, error) {
+  p := formatPath(path)
+  files, err := os.ReadDir(p)
 
-func (fs *FakeFilesystem) Write(path string, text string) error {
-	fs.files[path] = text
-	return nil
-}
+  filepaths := []string{}
+  for _, file := range files {
+    filepaths = append(filepaths, file.Name())
+  }
 
-func (fs *FakeFilesystem) Exists(path string) bool {
-	_, ok := fs.files[path]
-	return ok
+  return filepaths, err
 }
 
 
