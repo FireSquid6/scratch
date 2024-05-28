@@ -5,6 +5,7 @@ import (
 	"path"
   "strings"
   "github.com/otiai10/copy"
+  "github.com/goccy/go-yaml"
 )
 
 type CommandContext struct {
@@ -110,4 +111,17 @@ func GetContext() CommandContext {
   conf := getDeafultConfig()
 
   return CommandContext{fs: fs, conf: conf}
+}
+
+
+func readConfig(fs Filesystem) Config {
+  file, err := fs.Read("~/.config/scratch.yaml")
+  if err != nil {
+    return getDeafultConfig()
+  }
+
+  config := getDeafultConfig()
+  yaml.Unmarshal([]byte(file.text), &config)
+
+  return config
 }
