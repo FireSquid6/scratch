@@ -25,6 +25,7 @@ type PadCmd struct {
 }
 
 func (c *PadCmd) Run(ctx *CommandContext) {
+  
 	createProject(ctx, "something", c.Template, ctx.conf.ScratchDirectory)
 }
 
@@ -41,7 +42,11 @@ func (c *DropCmd) Run(ctx *CommandContext) {
       fmt.Println("Continuing with hard airdrop.")
     }
   }
+
+  // Todo: implement the rest of the drop command 
+
 }
+
 
 // helper function used in create and pad commands
 func createProject(ctx *CommandContext, name string, template string, directory string) {
