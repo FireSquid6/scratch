@@ -145,10 +145,6 @@ func (c *ProjectsCmd) Run(ctx *CommandContext) {
 	}
 }
 
-type Elevate struct {
-	Name string `arg:"-n,--name" default:"__none__" help:"Name of the project"`
-}
-
 type Archive struct {
 	Name string `arg:"-n,--name" help:"Name of the project or scratch to archive"`
 	All  bool   `arg:"-a,--all" help:"Archive all projects"`
