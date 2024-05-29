@@ -1,11 +1,11 @@
 package main
 
 import (
+	"github.com/goccy/go-yaml"
+	"github.com/otiai10/copy"
 	"os"
 	"path"
-  "strings"
-  "github.com/otiai10/copy"
-  "github.com/goccy/go-yaml"
+	"strings"
 )
 
 type CommandContext struct {
@@ -18,8 +18,8 @@ type Filesystem interface {
 	Write(path string, text string) error
 	Exists(path string) bool
 	Delete(path string) error
-  GetFilepathsInDirectory(path string) ([]string, error)
-  Copy(src string, dest string) error
+	GetFilepathsInDirectory(path string) ([]string, error)
+	Copy(src string, dest string) error
 }
 
 type File struct {
@@ -41,28 +41,28 @@ func getDeafultConfig() Config {
 	}
 }
 
-func formatPath(p string) (string) {
-  home := os.Getenv("HOME")
+func formatPath(p string) string {
+	home := os.Getenv("HOME")
 
-  if strings.HasPrefix(p, "~/") {
-    return path.Join(home, p[2:])
-  }
+	if strings.HasPrefix(p, "~/") {
+		return path.Join(home, p[2:])
+	}
 
-  return p
+	return p
 }
 
-func fakeFormatPath(p string) (string) {
-  if strings.HasPrefix(p, "~/") {
-    return path.Join("/home/user", p[2:])
-  }
+func fakeFormatPath(p string) string {
+	if strings.HasPrefix(p, "~/") {
+		return path.Join("/home/user", p[2:])
+	}
 
-  return p
+	return p
 }
 
 type RealFilesystem struct{}
 
 func (fs *RealFilesystem) Read(path string) (File, error) {
-  p := formatPath(path)
+	p := formatPath(path)
 	f, err := os.ReadFile(p)
 	if err != nil {
 		return File{}, err
@@ -72,56 +72,55 @@ func (fs *RealFilesystem) Read(path string) (File, error) {
 }
 
 func (fs *RealFilesystem) Write(path string, text string) error {
-  p := formatPath(path)
+	p := formatPath(path)
 	return os.WriteFile(p, []byte(text), 0644)
 }
 
 func (fs *RealFilesystem) Exists(path string) bool {
-  p := formatPath(path)
+	p := formatPath(path)
 	_, err := os.Stat(p)
 	return err == nil
 }
 
 func (fs *RealFilesystem) Delete(path string) error {
-  p := formatPath(path)
+	p := formatPath(path)
 	return os.Remove(p)
 }
 
 func (fs *RealFilesystem) Copy(src string, dest string) error {
-  src = formatPath(src)
-  dest = formatPath(dest)
-  return copy.Copy(src, dest)
+	src = formatPath(src)
+	dest = formatPath(dest)
+	return copy.Copy(src, dest)
 }
+
 
 func (fs *RealFilesystem) GetFilepathsInDirectory(path string) ([]string, error) {
-  p := formatPath(path)
-  files, err := os.ReadDir(p)
+	p := formatPath(path)
+	files, err := os.ReadDir(p)
 
-  filepaths := []string{}
-  for _, file := range files {
-    filepaths = append(filepaths, file.Name())
-  }
+	filepaths := []string{}
+	for _, file := range files {
+		filepaths = append(filepaths, file.Name())
+	}
 
-  return filepaths, err
+	return filepaths, err
 }
-
 
 func GetContext() CommandContext {
-  fs := &RealFilesystem{}
-  conf := getDeafultConfig()
+	fs := &RealFilesystem{}
+	conf := getDeafultConfig()
 
-  return CommandContext{fs: fs, conf: conf}
+	return CommandContext{fs: fs, conf: conf}
 }
 
-
 func readConfig(fs Filesystem) Config {
-  file, err := fs.Read("~/.config/scratch.yaml")
-  if err != nil {
-    return getDeafultConfig()
-  }
+	file, err := fs.Read("~/.config/scratch.yaml")
+	if err != nil {
+		return getDeafultConfig()
+	}
 
-  config := getDeafultConfig()
-  yaml.Unmarshal([]byte(file.text), &config)
+	config := getDeafultConfig()
+	yaml.Unmarshal([]byte(file.text), &config)
 
-  return config
+	return config
 }

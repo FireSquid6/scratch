@@ -16,6 +16,7 @@ var args struct {
 	Elevate   *Elevate      `arg:"subcommand:elevate" help:"Elevate a project to a template"`
 	Archive   *Archive      `arg:"subcommand:archive" help:"Archive a project"`
 	Unarchive *Unarchive    `arg:"subcommand:unarchive" help:"Unarchive a project"`
+	Airdrop   *DropCmd      `arg:"subcommand:airdrop" help:"Copy a file to the scratch directory"`
 }
 
 func main() {
@@ -27,6 +28,14 @@ func main() {
 		args.Create.Run(&ctx)
 	case args.Pad != nil:
 		args.Pad.Run(&ctx)
+	case args.Templates != nil:
+		args.Templates.Run(&ctx)
+	case args.PadList != nil:
+		args.PadList.Run(&ctx)
+	case args.Projects != nil:
+		args.Projects.Run(&ctx)
+	case args.Airdrop != nil:
+		args.Airdrop.Run(&ctx)
 	default:
 		fmt.Println("No comamnd specified. Try --help for more information.")
 	}

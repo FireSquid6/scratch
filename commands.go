@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"os"
 	"path"
 )
 
@@ -15,9 +17,8 @@ func (c *CreateCmd) Run(ctx *CommandContext) {
 }
 
 type DropCmd struct {
-	Name     string `arg:"-n,--name" help:"Name of the project to drop a template into"`
+	Name     string `arg:"-n,--name" help:"Name of the project to drop a template into. Will be current directory if not specified"`
 	Template string `arg:"-t,--template" help:"Template name to drop"`
-	Hard     bool   `arg:"-h,--hard" help:"Overwrite everything if the template conflicts"`
 }
 
 type PadCmd struct {
@@ -25,28 +26,48 @@ type PadCmd struct {
 }
 
 func (c *PadCmd) Run(ctx *CommandContext) {
-  
-	createProject(ctx, "something", c.Template, ctx.conf.ScratchDirectory)
+	nouns := getNouns()
+	adjectives := getAdjectives()
+
+	adjective := adjectives[rand.Intn(len(adjectives))]
+	noun := nouns[rand.Intn(len(nouns))]
+
+	createProject(ctx, adjective+"-"+noun, c.Template, ctx.conf.ScratchDirectory)
 }
 
 func (c *DropCmd) Run(ctx *CommandContext) {
-  if c.Hard {
-    fmt.Println("Warning! You are about to do a hard airdrop. This will overwrite any existing files. Enter 'y' if you are ok with these consequences.")
+  fmt.Println("Warning! You are about to do a hard airdrop. This will overwrite any existing files. Enter 'y' if you are ok with these consequences.")
 
-    var response string
-    fmt.Scanln(&response)
-    if response != "y" {
-      fmt.Println("Aborting.")
-      return
-    } else {
-      fmt.Println("Continuing with hard airdrop.")
-    }
+  var response string
+  fmt.Scanln(&response)
+  if response != "y" {
+    fmt.Println("Aborting.")
+    return
+  } else {
+    fmt.Println("Continuing with hard airdrop.")
   }
 
-  // Todo: implement the rest of the drop command 
+	// Todo: implement the rest of the drop command
+	templatePath := path.Join(ctx.conf.TemplatesDirectory, c.Template)
+	if !ctx.fs.Exists(templatePath) {
+		fmt.Println("Template not found. Aborting.")
+		return
+	}
 
+	filepath := ""
+	err := error(nil)
+	if c.Name == "" {
+		filepath, err = os.Getwd()
+		if err != nil {
+			fmt.Println("Error getting current directory:", err)
+		}
+	} else {
+		filepath = path.Join(ctx.conf.ProjectsDirectory, c.Name)
+	}
+
+	ctx.fs.Copy(templatePath, filepath)
+  fmt.Println("Dropped template", c.Template, "into", filepath)
 }
-
 
 // helper function used in create and pad commands
 func createProject(ctx *CommandContext, name string, template string, directory string) {
@@ -76,8 +97,53 @@ func createProject(ctx *CommandContext, name string, template string, directory 
 }
 
 type TemplatesCmd struct{}
+
+func (c *TemplatesCmd) Run(ctx *CommandContext) {
+	filepaths, err := ctx.fs.GetFilepathsInDirectory(ctx.conf.TemplatesDirectory)
+
+	if err != nil {
+		fmt.Println("Error reading templates directory:", err)
+		return
+	}
+
+	for _, filepath := range filepaths {
+		_, file := path.Split(filepath)
+
+		fmt.Println(file)
+	}
+}
+
 type ProjectsCmd struct{}
 type PadsCmd struct{}
+
+func (c *PadsCmd) Run(ctx *CommandContext) {
+	filepaths, err := ctx.fs.GetFilepathsInDirectory(ctx.conf.ScratchDirectory)
+	if err != nil {
+		fmt.Println("Error reading scratch directory:", err)
+		return
+	}
+
+	for _, filepath := range filepaths {
+		_, file := path.Split(filepath)
+
+		fmt.Println(file)
+	}
+}
+
+func (c *ProjectsCmd) Run(ctx *CommandContext) {
+	filepaths, err := ctx.fs.GetFilepathsInDirectory(ctx.conf.ProjectsDirectory)
+
+	if err != nil {
+		fmt.Println("Error reading projects directory:", err)
+		return
+	}
+
+	for _, filepath := range filepaths {
+		_, file := path.Split(filepath)
+
+		fmt.Println(file)
+	}
+}
 
 type Elevate struct {
 	Name string `arg:"-n,--name" default:"__none__" help:"Name of the project"`
