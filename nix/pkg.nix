@@ -3,7 +3,7 @@
 
 buildGoModule rec {
   pname = "scratch";
-  version = "1.0.1";
+  version = "1.0.2";
 
   src = fetchFromGittHub {
     owner = "firesquid6";
