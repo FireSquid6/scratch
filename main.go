@@ -13,8 +13,6 @@ var args struct {
 	PadList   *PadsCmd      `arg:"subcommand:pads" help:"List scratchpads"`
 	Projects  *ProjectsCmd  `arg:"subcommand:projects" help:"List projects"`
 	Templates *TemplatesCmd `arg:"subcommand:templates" help:"List templates"`
-	Archive   *Archive      `arg:"subcommand:archive" help:"Archive a project"`
-	Unarchive *Unarchive    `arg:"subcommand:unarchive" help:"Unarchive a project"`
 	Airdrop   *DropCmd      `arg:"subcommand:airdrop" help:"Copy a file to the scratch directory"`
 }
 
