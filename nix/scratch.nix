@@ -5,12 +5,14 @@ buildGoModule rec {
   pname = "scratch";
   version = "1.0.2";
 
-  src = fetchFromGittHub {
+  src = fetchFromGitHub {
     owner = "firesquid6";
     repo = "scratch";
     rev = "v${version}";
-    hash = ""
+    hash = "sha256-FNTC82AaDhH/17zPYDmBeO/jIRT1R7bOLgemxwH1Na8";
   };
+
+  vendorSha256 = null;
 
   meta = with lib; {
     description = "A simple project manager";
